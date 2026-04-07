@@ -180,7 +180,6 @@
     }
 
     /* ── COMMENTS SECTION ── */
-    .comment-section { max-width:960px; margin:0 auto; padding:0 14px 48px; }
     .cmt-card-wrap {
       background: var(--card-bg); border-radius: var(--radius);
       box-shadow: var(--shadow); padding: 22px 20px; margin-top: 24px;
@@ -245,6 +244,29 @@
     .cmt-text { font-size:.85rem; line-height:1.55; color:var(--text); margin-top:4px; }
     .cmt-empty { color:var(--muted); font-size:.85rem; text-align:center; padding:28px; }
 
+    /* ── ADMIN ── */
+    .admin-login-btn {
+      background:none; border:1px solid var(--border); border-radius:50%;
+      width:28px; height:28px; cursor:pointer; font-size:.85rem;
+      display:flex; align-items:center; justify-content:center;
+      opacity:.4; transition:opacity .2s;
+    }
+    .admin-login-btn:hover { opacity:1; }
+    .admin-login-btn.active { opacity:1; background:#fef9c3; border-color:#fbbf24; }
+    .admin-mode-badge {
+      font-size:.72rem; font-weight:700; background:#fef9c3;
+      border:1px solid #fbbf24; color:#92400e;
+      border-radius:50px; padding:3px 10px;
+    }
+    .cmt-delete-btn {
+      background:none; border:1px solid #fecaca; color:#ef4444;
+      border-radius:50%; width:26px; height:26px; cursor:pointer;
+      font-size:.8rem; display:none; align-items:center; justify-content:center;
+      transition:background .15s; flex-shrink:0;
+    }
+    .cmt-delete-btn:hover { background:#fef2f2; }
+    body.admin-mode .cmt-delete-btn { display:flex; }
+
     @media(max-width:480px){
       .reaction-btn { font-size:.82rem; padding:7px 12px; }
       .cmt-form-row { flex-direction:column; }
@@ -286,7 +308,58 @@
     </div>
   </div>
 
-  <p class="sec-label">ราคาน้ำมันทุกประเภท (บาท/ลิตร)</p>
+  <!-- ── COMMENT PANEL (แสดงเมื่อเลือก tab ความเห็น) ── -->
+  <div id="comment-panel" style="display:none">
+    <div class="cmt-card-wrap">
+      <div class="cmt-sec-title">
+        💬 ความรู้สึกเรื่องราคาวันนี้
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="visitor-badge" id="visitor-badge">👁 กำลังโหลด...</span>
+          <button class="admin-login-btn" id="admin-login-btn" onclick="toggleAdminLogin()" title="แอดมิน">🔐</button>
+        </div>
+      </div>
+
+      <!-- Admin login bar -->
+      <div id="admin-bar" style="display:none;margin-bottom:14px">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input id="admin-pw" type="password" class="cmt-input" placeholder="รหัสผ่านแอดมิน" maxlength="40"
+            style="flex:1;min-width:160px;padding:8px 12px"
+            onkeydown="if(event.key==='Enter')doAdminLogin()"/>
+          <button class="cmt-submit" style="padding:8px 18px" onclick="doAdminLogin()">เข้าสู่ระบบ</button>
+          <span id="admin-status"></span>
+        </div>
+      </div>
+
+      <!-- Reaction buttons -->
+      <div class="reaction-strip">
+        <button class="reaction-btn" data-r="😱" onclick="pickReaction(this)">😱 แพงมาก!</button>
+        <button class="reaction-btn" data-r="😤" onclick="pickReaction(this)">😤 ทนได้</button>
+        <button class="reaction-btn" data-r="😊" onclick="pickReaction(this)">😊 ราคาโอเค</button>
+        <button class="reaction-btn" data-r="🎉" onclick="pickReaction(this)">🎉 ถูกลงแล้ว!</button>
+      </div>
+
+      <!-- Comment form -->
+      <div class="cmt-form">
+        <input class="cmt-input" id="cmt-name" type="text"
+          placeholder="ชื่อของคุณ (ไม่บังคับ — ระบบ anonymous)" maxlength="30"/>
+        <textarea class="cmt-input" id="cmt-text" rows="2"
+          placeholder="แสดงความคิดเห็น... (ไม่บังคับ)" maxlength="120"></textarea>
+        <div class="cmt-form-row">
+          <div style="font-size:.75rem;color:var(--muted);align-self:center">
+            ✅ ส่งได้ทุก 5 นาที &nbsp;·&nbsp; เก็บ anonymous
+          </div>
+          <button class="cmt-submit" id="cmt-submit" onclick="submitComment()">📨 ส่งความเห็น</button>
+        </div>
+      </div>
+
+      <div class="cmt-divider">ความเห็นล่าสุด</div>
+      <div class="cmt-list" id="cmt-list">
+        <div class="cmt-empty">กำลังโหลดความเห็น...</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="sec-label" id="sec-label">ราคาน้ำมันทุกประเภท (บาท/ลิตร)</p>
   <div id="fuel-grid" class="fuel-grid">
     <div class="loader-wrap" style="grid-column:1/-1">
       <div class="spinner"></div>
@@ -294,44 +367,6 @@
     </div>
   </div>
 </main>
-
-<!-- ── COMMENTS ── -->
-<section class="comment-section">
-  <div class="cmt-card-wrap">
-    <div class="cmt-sec-title">
-      💬 ความรู้สึกเรื่องราคาวันนี้
-      <span class="visitor-badge" id="visitor-badge">👁 กำลังโหลด...</span>
-    </div>
-
-    <!-- Reaction buttons -->
-    <div class="reaction-strip" id="reaction-strip">
-      <button class="reaction-btn" data-r="😱" onclick="pickReaction(this)">😱 แพงมาก!</button>
-      <button class="reaction-btn" data-r="😤" onclick="pickReaction(this)">😤 ทนได้</button>
-      <button class="reaction-btn" data-r="😊" onclick="pickReaction(this)">😊 ราคาโอเค</button>
-      <button class="reaction-btn" data-r="🎉" onclick="pickReaction(this)">🎉 ถูกลงแล้ว!</button>
-    </div>
-
-    <!-- Comment form -->
-    <div class="cmt-form">
-      <input class="cmt-input" id="cmt-name" type="text"
-        placeholder="ชื่อของคุณ (ไม่บังคับ — ระบบ anonymous)" maxlength="30"/>
-      <textarea class="cmt-input" id="cmt-text" rows="2"
-        placeholder="แสดงความคิดเห็น... (ไม่บังคับ)" maxlength="120"></textarea>
-      <div class="cmt-form-row">
-        <div style="font-size:.75rem;color:var(--muted);align-self:center">
-          ✅ ส่งได้ทุก 5 นาที &nbsp;·&nbsp; เก็บ anonymous
-        </div>
-        <button class="cmt-submit" id="cmt-submit" onclick="submitComment()">📨 ส่งความเห็น</button>
-      </div>
-    </div>
-
-    <!-- Comments list -->
-    <div class="cmt-divider">ความเห็นล่าสุด</div>
-    <div class="cmt-list" id="cmt-list">
-      <div class="cmt-empty">กำลังโหลดความเห็น...</div>
-    </div>
-  </div>
-</section>
 
 <footer>
   ข้อมูลจาก <a href="https://github.com/max180643/thai-oil-api" target="_blank">Thai Oil API</a>
@@ -510,25 +545,42 @@ let _activeKey = null;
 
 function selectStation(key) {
   _activeKey = key;
+
+  // Highlight pill
+  document.querySelectorAll(".station-pill").forEach(p => p.classList.toggle("active", p.dataset.key === key));
+
+  // ── tab ความเห็น ──
+  if (key === "__comments__") {
+    document.getElementById("comment-panel").style.display = "";
+    document.getElementById("sec-header-wrap").style.display = "none";
+    document.getElementById("sec-label").style.display = "none";
+    document.getElementById("fuel-grid").style.display = "none";
+    return;
+  }
+
+  // ── tab ปั๊มน้ำมัน ──
+  document.getElementById("comment-panel").style.display = "none";
+  document.getElementById("sec-label").style.display = "";
+  document.getElementById("fuel-grid").style.display = "";
+
   const sd    = getStation(key);
   const items = flattenStation(_stations[key]);
 
-  // Section header
   document.getElementById("sec-logo").innerHTML = logoHtml(sd, 46);
   document.getElementById("sec-title").textContent = sd.name;
   document.getElementById("sec-sub").textContent   = `แสดงราคาน้ำมัน ${items.length} ชนิด`;
   document.getElementById("sec-header-wrap").style.display = "flex";
-
-  // Fuel cards — always visible, update immediately
   document.getElementById("fuel-grid").innerHTML = buildFuelCards(items);
-
-  // Highlight pill
-  document.querySelectorAll(".station-pill").forEach(p => p.classList.toggle("active", p.dataset.key === key));
 }
 
 // ── BUILD STATION PILLS ──────────────────────────────────────────
 function buildPills(keys) {
-  return keys.map(k => {
+  const commentPill = `<button class="station-pill" data-key="__comments__" onclick="selectStation('__comments__')">
+    <div class="pill-logo" style="background:#eff6ff;font-size:1rem;display:flex;align-items:center;justify-content:center">💬</div>
+    <span class="station-label-pill">ความเห็น</span>
+  </button>`;
+
+  return commentPill + keys.map(k => {
     const sd = getStation(k);
     let lgo;
     if (sd.logoSvg) {
@@ -641,9 +693,71 @@ setInterval(fetchPrices, 5 * 60 * 1000);
 //     - Execute as: Me  |  Who has access: Anyone
 //  4. คัดลอก URL แล้ววางใน SCRIPT_URL ด้านล่าง
 //
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz1R4DwCdNlhS9AnvPfYidw8I8XItKorZzJBxUg0-8W0yWSeE6m2GgJfuEIMz_sd6xW6g/exec";  // <-- วาง Apps Script URL ตรงนี้
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz1R4DwCdNlhS9AnvPfYidw8I8XItKorZzJBxUg0-8W0yWSeE6m2GgJfuEIMz_sd6xW6g/exec";
 
 let _selectedReaction = "";
+let _adminKey = "";   // เก็บ key หลัง login สำเร็จ
+
+// ── ADMIN MODE ───────────────────────────────────────────────────
+function toggleAdminLogin() {
+  const bar = document.getElementById("admin-bar");
+  const btn = document.getElementById("admin-login-btn");
+  const open = bar.style.display === "none";
+  bar.style.display = open ? "" : "none";
+  btn.classList.toggle("open", open);
+  if (open) document.getElementById("admin-pw").focus();
+}
+
+async function doAdminLogin() {
+  const pw  = document.getElementById("admin-pw").value.trim();
+  const status = document.getElementById("admin-status");
+  if (!pw) return;
+  status.textContent = "กำลังตรวจสอบ...";
+  status.style.color = "var(--muted)";
+
+  try {
+    const res  = await fetch(SCRIPT_URL + "?action=adminCheck&adminKey=" + encodeURIComponent(pw));
+    const data = await res.json();
+    if (data.ok) {
+      _adminKey = pw;
+      document.body.classList.add("admin-mode");
+      document.getElementById("admin-bar").style.display = "none";
+      document.getElementById("admin-login-btn").classList.add("active");
+      // ใส่ badge แอดมิน
+      const title = document.querySelector(".cmt-sec-title");
+      if (!document.getElementById("admin-mode-badge")) {
+        const badge = document.createElement("span");
+        badge.id = "admin-mode-badge";
+        badge.className = "admin-mode-badge";
+        badge.textContent = "🛡 แอดมิน";
+        title.appendChild(badge);
+      }
+      loadComments();  // reload เพื่อแสดงปุ่มลบ
+    } else {
+      status.textContent = "❌ รหัสผ่านไม่ถูกต้อง";
+      status.style.color = "#ef4444";
+    }
+  } catch(e) {
+    status.textContent = "เกิดข้อผิดพลาด";
+    status.style.color = "#ef4444";
+  }
+}
+
+async function deleteComment(rowIndex, el) {
+  if (!_adminKey) return;
+  if (!confirm("ลบความเห็นนี้?")) return;
+  try {
+    const res  = await fetch(
+      SCRIPT_URL + "?action=deleteComment&row=" + rowIndex + "&adminKey=" + encodeURIComponent(_adminKey)
+    );
+    const data = await res.json();
+    if (data.success) {
+      el.closest(".cmt-item").remove();
+    } else {
+      alert("ลบไม่ได้: " + (data.error || "unknown error"));
+    }
+  } catch(e) { alert("เกิดข้อผิดพลาด"); }
+}
 
 function pickReaction(btn) {
   document.querySelectorAll(".reaction-btn").forEach(b => b.classList.remove("selected"));
@@ -748,6 +862,7 @@ async function loadComments() {
           <span class="cmt-reaction">${escHtml(c.reaction || "💬")}</span>
           <span class="cmt-name">${escHtml(c.name || "ไม่ระบุชื่อ")}</span>
           <span class="cmt-time">${escHtml(c.datetime || "")}</span>
+          <button class="cmt-delete-btn" onclick="deleteComment(${c.rowIndex}, this)" title="ลบ">🗑</button>
         </div>
         ${c.comment ? `<div class="cmt-text">${escHtml(c.comment)}</div>` : ""}
       </div>`).join("");
