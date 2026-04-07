@@ -245,14 +245,6 @@
     .cmt-empty { color:var(--muted); font-size:.85rem; text-align:center; padding:28px; }
 
     /* ── ADMIN ── */
-    .admin-login-btn {
-      background:none; border:1px solid var(--border); border-radius:50%;
-      width:28px; height:28px; cursor:pointer; font-size:.85rem;
-      display:flex; align-items:center; justify-content:center;
-      opacity:.4; transition:opacity .2s;
-    }
-    .admin-login-btn:hover { opacity:1; }
-    .admin-login-btn.active { opacity:1; background:#fef9c3; border-color:#fbbf24; }
     .admin-mode-badge {
       font-size:.72rem; font-weight:700; background:#fef9c3;
       border:1px solid #fbbf24; color:#92400e;
@@ -312,11 +304,8 @@
   <div id="comment-panel" style="display:none">
     <div class="cmt-card-wrap">
       <div class="cmt-sec-title">
-        💬 ความรู้สึกเรื่องราคาวันนี้
-        <div style="display:flex;align-items:center;gap:8px">
-          <span class="visitor-badge" id="visitor-badge">👁 กำลังโหลด...</span>
-          <button class="admin-login-btn" id="admin-login-btn" onclick="toggleAdminLogin()" title="แอดมิน">🔐</button>
-        </div>
+        <span id="cmt-title-tap" onclick="tapAdminTitle()" style="cursor:default;user-select:none">💬 ความรู้สึกเรื่องราคาวันนี้</span>
+        <span class="visitor-badge" id="visitor-badge">👁 กำลังโหลด...</span>
       </div>
 
       <!-- Admin login bar -->
@@ -698,14 +687,19 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz1R4DwCdNlhS9AnvPfY
 let _selectedReaction = "";
 let _adminKey = "";   // เก็บ key หลัง login สำเร็จ
 
-// ── ADMIN MODE ───────────────────────────────────────────────────
-function toggleAdminLogin() {
-  const bar = document.getElementById("admin-bar");
-  const btn = document.getElementById("admin-login-btn");
-  const open = bar.style.display === "none";
-  bar.style.display = open ? "" : "none";
-  btn.classList.toggle("open", open);
-  if (open) document.getElementById("admin-pw").focus();
+// ── ADMIN MODE (กดหัวข้อ 5 ครั้งภายใน 3 วินาที) ─────────────────
+let _tapCount = 0, _tapTimer = null;
+function tapAdminTitle() {
+  _tapCount++;
+  clearTimeout(_tapTimer);
+  _tapTimer = setTimeout(() => { _tapCount = 0; }, 3000);
+  if (_tapCount >= 5) {
+    _tapCount = 0;
+    const bar = document.getElementById("admin-bar");
+    const open = bar.style.display === "none";
+    bar.style.display = open ? "" : "none";
+    if (open) document.getElementById("admin-pw").focus();
+  }
 }
 
 async function doAdminLogin() {
@@ -722,15 +716,13 @@ async function doAdminLogin() {
       _adminKey = pw;
       document.body.classList.add("admin-mode");
       document.getElementById("admin-bar").style.display = "none";
-      document.getElementById("admin-login-btn").classList.add("active");
-      // ใส่ badge แอดมิน
-      const title = document.querySelector(".cmt-sec-title");
+      // ใส่ badge แอดมิน ข้างๆ visitor badge
       if (!document.getElementById("admin-mode-badge")) {
         const badge = document.createElement("span");
         badge.id = "admin-mode-badge";
         badge.className = "admin-mode-badge";
         badge.textContent = "🛡 แอดมิน";
-        title.appendChild(badge);
+        document.getElementById("visitor-badge").insertAdjacentElement("afterend", badge);
       }
       loadComments();  // reload เพื่อแสดงปุ่มลบ
     } else {
@@ -875,7 +867,7 @@ async function trackAndLoadVisitors() {
     return;
   }
   try {
-    const res  = await fetch(SCRIPT_URL + "?action=track", { cache:"no-cache" });
+    const res  = await fetch(SCRIPT_URL + "?action=track&t=" + Date.now());
     const data = await res.json();
     const badge = document.getElementById("visitor-badge");
     if (data.todayCount != null) {
