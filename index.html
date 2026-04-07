@@ -178,6 +178,78 @@
     @media(max-width:360px){
       .fuel-grid { grid-template-columns: 1fr; }
     }
+
+    /* ── COMMENTS SECTION ── */
+    .comment-section { max-width:960px; margin:0 auto; padding:0 14px 48px; }
+    .cmt-card-wrap {
+      background: var(--card-bg); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 22px 20px; margin-top: 24px;
+    }
+    .cmt-sec-title {
+      font-size:1rem; font-weight:800; margin-bottom:16px;
+      display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;
+    }
+    .visitor-badge {
+      font-size:.75rem; font-weight:600; color:var(--muted);
+      background:var(--bg); border:1px solid var(--border);
+      border-radius:50px; padding:4px 12px; white-space:nowrap;
+    }
+    /* reactions */
+    .reaction-strip { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+    .reaction-btn {
+      border:2px solid var(--border); background:var(--bg);
+      border-radius:50px; padding:8px 16px;
+      cursor:pointer; font-family:inherit; font-size:.88rem; font-weight:600;
+      transition:all .18s; color:var(--text); line-height:1.3;
+    }
+    .reaction-btn:hover { border-color:var(--primary); background:#eff6ff; }
+    .reaction-btn.selected {
+      border-color:var(--primary); background:#eff6ff;
+      color:var(--primary); box-shadow:0 2px 8px rgba(30,86,219,.15);
+    }
+    /* form */
+    .cmt-form { display:flex; flex-direction:column; gap:10px; margin-bottom:24px; }
+    .cmt-input {
+      border:1.5px solid var(--border); border-radius:10px;
+      padding:10px 14px; font-family:inherit; font-size:.88rem;
+      background:var(--bg); color:var(--text); resize:vertical;
+      transition:border-color .2s; outline:none;
+    }
+    .cmt-input:focus { border-color:var(--primary); }
+    .cmt-form-row { display:flex; gap:10px; align-items:flex-end; }
+    .cmt-form-row .cmt-input { flex:1; }
+    .cmt-submit {
+      background:var(--primary); color:#fff; border:none;
+      border-radius:50px; padding:10px 22px; white-space:nowrap;
+      font-family:inherit; font-size:.88rem; font-weight:700;
+      cursor:pointer; transition:background .2s; flex-shrink:0;
+    }
+    .cmt-submit:hover { background:#1e3a8a; }
+    .cmt-submit:disabled { background:var(--muted); cursor:not-allowed; }
+    /* comment cards */
+    .cmt-divider {
+      font-size:.72rem; font-weight:700; text-transform:uppercase;
+      letter-spacing:1px; color:var(--muted); margin-bottom:12px;
+    }
+    .cmt-list { display:flex; flex-direction:column; gap:10px; }
+    .cmt-item {
+      background:var(--bg); border-radius:12px;
+      padding:12px 14px; border:1px solid var(--border);
+    }
+    .cmt-top {
+      display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:2px;
+    }
+    .cmt-reaction { font-size:1.25rem; line-height:1; }
+    .cmt-name { font-size:.82rem; font-weight:700; }
+    .cmt-time { font-size:.72rem; color:var(--muted); margin-left:auto; }
+    .cmt-text { font-size:.85rem; line-height:1.55; color:var(--text); margin-top:4px; }
+    .cmt-empty { color:var(--muted); font-size:.85rem; text-align:center; padding:28px; }
+
+    @media(max-width:480px){
+      .reaction-btn { font-size:.82rem; padding:7px 12px; }
+      .cmt-form-row { flex-direction:column; }
+      .cmt-submit { width:100%; }
+    }
   </style>
 </head>
 <body>
@@ -223,6 +295,44 @@
   </div>
 </main>
 
+<!-- ── COMMENTS ── -->
+<section class="comment-section">
+  <div class="cmt-card-wrap">
+    <div class="cmt-sec-title">
+      💬 ความรู้สึกเรื่องราคาวันนี้
+      <span class="visitor-badge" id="visitor-badge">👁 กำลังโหลด...</span>
+    </div>
+
+    <!-- Reaction buttons -->
+    <div class="reaction-strip" id="reaction-strip">
+      <button class="reaction-btn" data-r="😱" onclick="pickReaction(this)">😱 แพงมาก!</button>
+      <button class="reaction-btn" data-r="😤" onclick="pickReaction(this)">😤 ทนได้</button>
+      <button class="reaction-btn" data-r="😊" onclick="pickReaction(this)">😊 ราคาโอเค</button>
+      <button class="reaction-btn" data-r="🎉" onclick="pickReaction(this)">🎉 ถูกลงแล้ว!</button>
+    </div>
+
+    <!-- Comment form -->
+    <div class="cmt-form">
+      <input class="cmt-input" id="cmt-name" type="text"
+        placeholder="ชื่อของคุณ (ไม่บังคับ — ระบบ anonymous)" maxlength="30"/>
+      <textarea class="cmt-input" id="cmt-text" rows="2"
+        placeholder="แสดงความคิดเห็น... (ไม่บังคับ)" maxlength="120"></textarea>
+      <div class="cmt-form-row">
+        <div style="font-size:.75rem;color:var(--muted);align-self:center">
+          ✅ ส่งได้ทุก 5 นาที &nbsp;·&nbsp; เก็บ anonymous
+        </div>
+        <button class="cmt-submit" id="cmt-submit" onclick="submitComment()">📨 ส่งความเห็น</button>
+      </div>
+    </div>
+
+    <!-- Comments list -->
+    <div class="cmt-divider">ความเห็นล่าสุด</div>
+    <div class="cmt-list" id="cmt-list">
+      <div class="cmt-empty">กำลังโหลดความเห็น...</div>
+    </div>
+  </div>
+</section>
+
 <footer>
   ข้อมูลจาก <a href="https://github.com/max180643/thai-oil-api" target="_blank">Thai Oil API</a>
   &nbsp;·&nbsp; ราคาอาจมีการเปลี่ยนแปลง กรุณาตรวจสอบกับสถานีบริการน้ำมัน
@@ -240,7 +350,7 @@ const STATIONS = {
   },
   shell: {
     name: "Shell", color: "#FBCE07",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Shell.svg/120px-Shell.svg.png",
+    logo: "image/Shell-Logo.png",
   },
   caltex: {
     name: "Caltex", color: "#E8192C",
@@ -256,23 +366,11 @@ const STATIONS = {
   },
   pt: {
     name: "PT", color: "#ED1C24",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/PTG_Energy_Logo.svg/120px-PTG_Energy_Logo.svg.png",
+    logo: "image/PTG_Energy_Logo.svg.png",
   },
   susco: {
     name: "Susco", color: "#F5C400",
-    logo: "https://upload.wikimedia.org/wikipedia/th/thumb/2/2a/Susco_Logo.png/120px-Susco_Logo.png",
-    logoFallbacks: [
-      "https://www.susco.co.th/images/logo_susco.gif",
-      "https://www.susco.co.th/images/logo.gif",
-    ],
-  },
-  susco_dealers: {
-    name: "Susco", color: "#F5C400",
-    logo: "https://upload.wikimedia.org/wikipedia/th/thumb/2/2a/Susco_Logo.png/120px-Susco_Logo.png",
-    logoFallbacks: [
-      "https://www.susco.co.th/images/logo_susco.gif",
-      "https://www.susco.co.th/images/logo.gif",
-    ],
+    logo: "image/Susco_Logo.svg.png",
   },
   irpc: {
     name: "IRPC", color: "#00457C",
@@ -300,9 +398,16 @@ const STATIONS = {
   },
 };
 
+// aliases: API keys ที่ควร map ไปหา station อื่น
+const STATION_ALIASES = {
+  susco_dealers: "susco",
+  bcp:           "bangchak",
+};
+
 function getStation(key) {
-  const k = (key||"").toLowerCase().replace(/[\s-]/g,"_");
-  return STATIONS[k] || { name:(key||"?").toUpperCase(), color:"#64748b", logo:"", logoSvg:null };
+  const k    = (key||"").toLowerCase().replace(/[\s-]/g,"_");
+  const real = STATION_ALIASES[k] || k;
+  return STATIONS[real] || { name:(key||"?").toUpperCase(), color:"#64748b", logo:"", logoSvg:null };
 }
 
 // ── FUEL METADATA ────────────────────────────────────────────────
@@ -473,9 +578,17 @@ async function fetchPrices() {
     if (!raw) throw new Error("ไม่สามารถเชื่อมต่อ API ได้");
 
     const { stations: rawStations, date } = normalise(raw);
-    // Remove blacklisted stations (e.g. esso) even if API returns them
+    // 1. ลบ blacklist (เช่น esso)
+    // 2. dedup: ถ้า 2 keys resolve เป็น station เดียวกัน ให้เก็บแค่ key แรก
+    const seenStation = new Set();
     const stations = Object.fromEntries(
-      Object.entries(rawStations).filter(([k]) => !BLACKLIST.has(k.toLowerCase()))
+      Object.entries(rawStations).filter(([k]) => {
+        if (BLACKLIST.has(k.toLowerCase())) return false;
+        const resolved = STATION_ALIASES[k.toLowerCase()] || k.toLowerCase();
+        if (seenStation.has(resolved)) return false;
+        seenStation.add(resolved);
+        return true;
+      })
     );
     const keys = Object.keys(stations);
     if (!keys.length) throw new Error("ไม่พบข้อมูลสถานีน้ำมัน");
@@ -518,6 +631,148 @@ async function fetchPrices() {
 
 fetchPrices();
 setInterval(fetchPrices, 5 * 60 * 1000);
+
+// ── COMMENTS & VISITOR TRACKING (Google Apps Script) ────────────
+//
+//  วิธีเชื่อมต่อ Google Sheets:
+//  1. เปิด script.google.com → สร้างโปรเจกต์ใหม่
+//  2. วาง code จากไฟล์ apps-script.gs
+//  3. Deploy → New deployment → Web app
+//     - Execute as: Me  |  Who has access: Anyone
+//  4. คัดลอก URL แล้ววางใน SCRIPT_URL ด้านล่าง
+//
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz1R4DwCdNlhS9AnvPfYidw8I8XItKorZzJBxUg0-8W0yWSeE6m2GgJfuEIMz_sd6xW6g/exec";  // <-- วาง Apps Script URL ตรงนี้
+
+let _selectedReaction = "";
+
+function pickReaction(btn) {
+  document.querySelectorAll(".reaction-btn").forEach(b => b.classList.remove("selected"));
+  btn.classList.add("selected");
+  _selectedReaction = btn.dataset.r;
+}
+
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+async function submitComment() {
+  if (!SCRIPT_URL) {
+    alert("⚙️ กรุณาตั้งค่า SCRIPT_URL ก่อนใช้ฟีเจอร์นี้\n(ดูวิธีใช้ในไฟล์ apps-script.gs)");
+    return;
+  }
+  const name = document.getElementById("cmt-name").value.trim();
+  const text = document.getElementById("cmt-text").value.trim();
+  if (!_selectedReaction && !text) {
+    alert("กรุณาเลือก reaction หรือใส่ความคิดเห็นก่อนนะคะ 🙏");
+    return;
+  }
+  // Rate limit: 1 ครั้ง / 5 นาที
+  const lastMs = parseInt(localStorage.getItem("cmt_last") || "0");
+  const wait   = 5 * 60 * 1000;
+  if (Date.now() - lastMs < wait) {
+    const left = Math.ceil((wait - (Date.now() - lastMs)) / 60000);
+    alert(`กรุณารอ ${left} นาทีก่อนส่งความเห็นอีกครั้ง ⏳`);
+    return;
+  }
+
+  const btn = document.getElementById("cmt-submit");
+  btn.disabled = true;
+  btn.textContent = "กำลังส่ง...";
+
+  const payload = {
+    name:     name || "ไม่ระบุชื่อ",
+    reaction: _selectedReaction,
+    comment:  text
+  };
+
+  try {
+    // POST with no-cors (fire-and-forget; Apps Script redirect blocks CORS on POST)
+    await fetch(SCRIPT_URL, {
+      method:  "POST",
+      mode:    "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify(payload)
+    });
+    localStorage.setItem("cmt_last", String(Date.now()));
+
+    // Optimistic UI — prepend new card immediately
+    const now    = new Date().toLocaleString("th-TH", { dateStyle:"short", timeStyle:"short" });
+    const newCard = `
+      <div class="cmt-item">
+        <div class="cmt-top">
+          <span class="cmt-reaction">${escHtml(_selectedReaction)}</span>
+          <span class="cmt-name">${escHtml(payload.name)}</span>
+          <span class="cmt-time">${now}</span>
+        </div>
+        ${text ? `<div class="cmt-text">${escHtml(text)}</div>` : ""}
+      </div>`;
+    const list = document.getElementById("cmt-list");
+    if (list.querySelector(".cmt-empty")) list.innerHTML = "";
+    list.insertAdjacentHTML("afterbegin", newCard);
+
+    // Reset form
+    document.getElementById("cmt-name").value = "";
+    document.getElementById("cmt-text").value = "";
+    document.querySelectorAll(".reaction-btn").forEach(b => b.classList.remove("selected"));
+    _selectedReaction = "";
+
+    btn.textContent = "✅ ส่งแล้ว!";
+    setTimeout(() => { btn.disabled = false; btn.textContent = "📨 ส่งความเห็น"; }, 2500);
+
+  } catch(err) {
+    btn.disabled = false;
+    btn.textContent = "📨 ส่งความเห็น";
+    alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
+  }
+}
+
+async function loadComments() {
+  if (!SCRIPT_URL) {
+    document.getElementById("cmt-list").innerHTML =
+      `<div class="cmt-empty">🔧 ยังไม่ได้เชื่อมต่อ Google Sheets<br><small style="opacity:.7">ดูวิธีตั้งค่าใน apps-script.gs</small></div>`;
+    return;
+  }
+  try {
+    const res  = await fetch(SCRIPT_URL + "?action=comments", { cache:"no-cache" });
+    const data = await res.json();
+    const list = document.getElementById("cmt-list");
+    if (!data.comments || !data.comments.length) {
+      list.innerHTML = `<div class="cmt-empty">ยังไม่มีความเห็น — เป็นคนแรกได้เลย! 🙌</div>`;
+      return;
+    }
+    list.innerHTML = data.comments.map(c => `
+      <div class="cmt-item">
+        <div class="cmt-top">
+          <span class="cmt-reaction">${escHtml(c.reaction || "💬")}</span>
+          <span class="cmt-name">${escHtml(c.name || "ไม่ระบุชื่อ")}</span>
+          <span class="cmt-time">${escHtml(c.datetime || "")}</span>
+        </div>
+        ${c.comment ? `<div class="cmt-text">${escHtml(c.comment)}</div>` : ""}
+      </div>`).join("");
+  } catch(_) { /* silent fail */ }
+}
+
+async function trackAndLoadVisitors() {
+  if (!SCRIPT_URL) {
+    document.getElementById("visitor-badge").textContent = "👁 —";
+    return;
+  }
+  try {
+    const res  = await fetch(SCRIPT_URL + "?action=track", { cache:"no-cache" });
+    const data = await res.json();
+    const badge = document.getElementById("visitor-badge");
+    if (data.todayCount != null) {
+      badge.textContent = `👁 ${Number(data.todayCount).toLocaleString("th-TH")} คนวันนี้`;
+      badge.title       = `ทั้งหมด ${Number(data.totalCount).toLocaleString("th-TH")} ครั้ง`;
+    }
+  } catch(_) { /* silent fail */ }
+}
+
+// Init
+loadComments();
+trackAndLoadVisitors();
 </script>
 </body>
 </html>
