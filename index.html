@@ -272,9 +272,14 @@
 <header>
   <h1>⛽ ราคาน้ำมันวันนี้</h1>
   <p>Thai Oil Price — อัปเดตราคาทุกปั๊มทั่วไทย</p>
-  <div class="badge">
-    <span class="dot"></span>
-    <span id="update-time">กำลังโหลด...</span>
+  <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:4px">
+    <div class="badge">
+      <span class="dot"></span>
+      <span id="update-time">กำลังโหลด...</span>
+    </div>
+    <div class="badge" id="visitor-badge" style="display:none">
+      👁 —
+    </div>
   </div><br/>
   <button class="refresh-btn" id="refresh-btn" onclick="fetchPrices()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -305,7 +310,6 @@
     <div class="cmt-card-wrap">
       <div class="cmt-sec-title">
         <span id="cmt-title-tap" onclick="tapAdminTitle()" style="cursor:default;user-select:none">💬 ความรู้สึกเรื่องราคาวันนี้</span>
-        <span class="visitor-badge" id="visitor-badge">👁 กำลังโหลด...</span>
       </div>
 
       <!-- Admin login bar -->
@@ -871,8 +875,9 @@ async function trackAndLoadVisitors() {
     const data = await res.json();
     const badge = document.getElementById("visitor-badge");
     if (data.todayCount != null) {
-      badge.textContent = `👁 ${Number(data.todayCount).toLocaleString("th-TH")} คนวันนี้`;
-      badge.title       = `ทั้งหมด ${Number(data.totalCount).toLocaleString("th-TH")} ครั้ง`;
+      badge.textContent    = `👁 ${Number(data.todayCount).toLocaleString("th-TH")} คนวันนี้`;
+      badge.title          = `ผู้เข้าชมทั้งหมด ${Number(data.totalCount).toLocaleString("th-TH")} ครั้ง`;
+      badge.style.display  = "";
     }
   } catch(_) { /* silent fail */ }
 }
