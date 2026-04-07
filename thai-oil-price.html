@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ราคาน้ำมันวันนี้ 🇹🇭</title>
+  <style>
+    :root {
+      --primary: #1a56db;
+      --primary-dark: #1e429f;
+      --accent: #f59e0b;
+      --accent-dark: #d97706;
+      --bg: #f0f4ff;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --success: #10b981;
+      --danger: #ef4444;
+      --shadow: 0 4px 24px rgba(30, 86, 219, 0.10);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', 'Noto Sans Thai', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      background: linear-gradient(135deg, #1a56db 0%, #1e429f 60%, #1e3a8a 100%);
+      color: #fff;
+      padding: 28px 20px 32px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 220px; height: 220px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 50%;
+    }
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: -80px; left: -40px;
+      width: 260px; height: 260px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 50%;
+    }
+    .header-flag { font-size: 2.2rem; margin-bottom: 6px; }
+    header h1 {
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      margin-bottom: 4px;
+    }
+    header p.subtitle {
+      font-size: 0.92rem;
+      opacity: 0.85;
+      margin-bottom: 16px;
+    }
+    .update-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 50px;
+      padding: 6px 16px;
+      font-size: 0.82rem;
+    }
+    .dot {
+      width: 8px; height: 8px;
+      background: #4ade80;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    /* ─── REFRESH BUTTON ─── */
+    .refresh-btn {
+      margin-top: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #fff;
+      border-radius: 50px;
+      padding: 8px 20px;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: inherit;
+    }
+    .refresh-btn:hover { background: rgba(255,255,255,0.28); }
+    .refresh-btn svg { width: 16px; height: 16px; }
+    .refresh-btn.loading svg { animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── MAIN CONTENT ─── */
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+    }
+
+    /* ─── SECTION HEADING ─── */
+    .section-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--text-muted);
+      margin: 28px 0 14px;
+    }
+
+    /* ─── GRID ─── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+      gap: 16px;
+    }
+
+    /* ─── CARDS ─── */
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border-left: 5px solid var(--accent);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px rgba(30, 86, 219, 0.15);
+    }
+    .card-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+    .card-info { flex: 1; min-width: 0; }
+    .card-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-name-en {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .card-price {
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+      line-height: 1;
+    }
+    .card-unit {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      margin-left: 2px;
+    }
+    .card-change {
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+    .card-change.up   { color: var(--danger); }
+    .card-change.down { color: var(--success); }
+    .card-change.same { color: var(--text-muted); }
+
+    /* Oil type color themes */
+    .theme-gasohol91  { border-color: #3b82f6; }
+    .theme-gasohol91  .card-icon { background: #eff6ff; }
+    .theme-gasohol95  { border-color: #8b5cf6; }
+    .theme-gasohol95  .card-icon { background: #f5f3ff; }
+    .theme-e20        { border-color: #10b981; }
+    .theme-e20        .card-icon { background: #ecfdf5; }
+    .theme-e85        { border-color: #f59e0b; }
+    .theme-e85        .card-icon { background: #fffbeb; }
+    .theme-diesel     { border-color: #ef4444; }
+    .theme-diesel     .card-icon { background: #fef2f2; }
+    .theme-dieselb7   { border-color: #f97316; }
+    .theme-dieselb7   .card-icon { background: #fff7ed; }
+    .theme-dieselb10  { border-color: #84cc16; }
+    .theme-dieselb10  .card-icon { background: #f7fee7; }
+    .theme-dieselb20  { border-color: #14b8a6; }
+    .theme-dieselb20  .card-icon { background: #f0fdfa; }
+    .theme-ngv        { border-color: #06b6d4; }
+    .theme-ngv        .card-icon { background: #ecfeff; }
+    .theme-lpg        { border-color: #ec4899; }
+    .theme-lpg        .card-icon { background: #fdf2f8; }
+    .theme-default    { border-color: #94a3b8; }
+    .theme-default    .card-icon { background: #f8fafc; }
+
+    /* ─── LOADER ─── */
+    .loader-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      gap: 16px;
+      color: var(--text-muted);
+    }
+    .spinner {
+      width: 44px; height: 44px;
+      border: 4px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    /* ─── ERROR ─── */
+    .error-box {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: var(--radius);
+      padding: 24px;
+      text-align: center;
+      color: #991b1b;
+    }
+    .error-box h3 { margin-bottom: 8px; }
+    .error-box p { font-size: 0.88rem; color: #b91c1c; }
+    .retry-btn {
+      margin-top: 14px;
+      background: #ef4444;
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 10px 24px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .retry-btn:hover { background: #dc2626; }
+
+    /* ─── SUMMARY STRIP ─── */
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 4px;
+    }
+    .summary-item {
+      background: var(--card-bg);
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+    .summary-val {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+    }
+    .summary-lbl {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--primary); text-decoration: none; }
+
+    /* ─── TABS ─── */
+    .tabs-wrap {
+      margin: 20px 0 4px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .tabs {
+      display: flex;
+      gap: 8px;
+      padding-bottom: 4px;
+      min-width: max-content;
+    }
+    .tab-btn {
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 50px;
+      padding: 8px 20px;
+      font-size: 0.88rem;
+      font-family: inherit;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.18s;
+      white-space: nowrap;
+    }
+    .tab-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .tab-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 480px) {
+      header { padding: 22px 16px 28px; }
+      main { padding: 18px 12px 40px; }
+      .card { padding: 16px; gap: 12px; }
+      .card-icon { width: 44px; height: 44px; font-size: 1.3rem; }
+      .card-price { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-flag">⛽</div>
+  <h1>ราคาน้ำมันวันนี้</h1>
+  <p class="subtitle">Thai Oil Price — อัปเดตล่าสุดจาก PTT</p>
+  <div class="update-badge">
+    <span class="dot"></span>
+    <span id="update-time">กำลังโหลด...</span>
+  </div>
+  <br/>
+  <button class="refresh-btn" id="refresh-btn" onclick="fetchPrices()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <path d="M23 4v6h-6M1 20v-6h6"/>
+      <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+    </svg>
+    รีเฟรช
+  </button>
+</header>
+
+<main>
+  <div id="summary-section" style="display:none">
+    <p class="section-title">ภาพรวมราคา</p>
+    <div class="summary" id="summary"></div>
+  </div>
+
+  <div id="tabs-container"></div>
+  <p class="section-title">ราคาน้ำมันทุกประเภท (บาท/ลิตร)</p>
+  <div id="content">
+    <div class="loader-wrap">
+      <div class="spinner"></div>
+      <span>กำลังดึงข้อมูลราคาน้ำมัน...</span>
+    </div>
+  </div>
+</main>
+
+<footer>
+  ข้อมูลจาก <a href="https://github.com/max180643/thai-oil-api" target="_blank">Thai Oil API</a>
+  &nbsp;·&nbsp; ราคาอาจมีการเปลี่ยนแปลง กรุณาตรวจสอบกับสถานีบริการน้ำมัน
+</footer>
+
+<script>
+  // ─── OIL METADATA ─────────────────────────────────────────────
+  const OIL_META = {
+    // keyword → { icon, theme, nameEn }
+    "แก๊สโซฮอล์ 91":  { icon: "🔵", theme: "gasohol91",  nameEn: "Gasohol 91" },
+    "แก๊สโซฮอล์ 95":  { icon: "🟣", theme: "gasohol95",  nameEn: "Gasohol 95" },
+    "gasohol 91":      { icon: "🔵", theme: "gasohol91",  nameEn: "Gasohol 91" },
+    "gasohol 95":      { icon: "🟣", theme: "gasohol95",  nameEn: "Gasohol 95" },
+    "e20":             { icon: "🟢", theme: "e20",        nameEn: "Gasohol E20" },
+    "e85":             { icon: "🟡", theme: "e85",        nameEn: "Gasohol E85" },
+    "b7":              { icon: "🟠", theme: "dieselb7",   nameEn: "Diesel B7" },
+    "b10":             { icon: "🍏", theme: "dieselb10",  nameEn: "Diesel B10" },
+    "b20":             { icon: "🩵", theme: "dieselb20",  nameEn: "Diesel B20" },
+    "ดีเซล":           { icon: "🔴", theme: "diesel",     nameEn: "Diesel" },
+    "diesel":          { icon: "🔴", theme: "diesel",     nameEn: "Diesel" },
+    "ngv":             { icon: "💨", theme: "ngv",        nameEn: "NGV" },
+    "lpg":             { icon: "💗", theme: "lpg",        nameEn: "LPG" },
+  };
+
+  function getMeta(name) {
+    const lower = (name || "").toLowerCase();
+    for (const [key, val] of Object.entries(OIL_META)) {
+      if (lower.includes(key.toLowerCase())) return val;
+    }
+    return { icon: "⛽", theme: "default", nameEn: name };
+  }
+
+  // ─── PRICE FORMATTING ─────────────────────────────────────────
+  function fmt(val) {
+    const n = parseFloat(val);
+    return isNaN(n) ? val : n.toFixed(2);
+  }
+
+  // ─── BUILD CARDS ──────────────────────────────────────────────
+  function buildCards(items) {
+    if (!items || items.length === 0) {
+      return `<div class="error-box"><h3>ไม่พบข้อมูล</h3><p>ไม่พบข้อมูลราคาน้ำมัน</p></div>`;
+    }
+
+    let prices = items.map(i => parseFloat(i.price)).filter(p => !isNaN(p));
+    let minP = Math.min(...prices);
+    let maxP = Math.max(...prices);
+
+    // Summary
+    const gasTypes = items.filter(i => getMeta(i.name).theme.startsWith('gasohol') || getMeta(i.name).theme === 'e20' || getMeta(i.name).theme === 'e85');
+    const dieselTypes = items.filter(i => getMeta(i.name).theme.startsWith('diesel'));
+    const avgGas = gasTypes.length ? (gasTypes.reduce((a,b) => a + parseFloat(b.price||0), 0) / gasTypes.length).toFixed(2) : '-';
+    const avgDiesel = dieselTypes.length ? (dieselTypes.reduce((a,b) => a + parseFloat(b.price||0), 0) / dieselTypes.length).toFixed(2) : '-';
+
+    document.getElementById('summary-section').style.display = '';
+    document.getElementById('summary').innerHTML = `
+      <div class="summary-item">
+        <div class="summary-val">${items.length}</div>
+        <div class="summary-lbl">ประเภทน้ำมัน</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-val" style="color:#3b82f6">${avgGas}</div>
+        <div class="summary-lbl">เฉลี่ยเบนซิน (฿)</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-val" style="color:#ef4444">${avgDiesel}</div>
+        <div class="summary-lbl">เฉลี่ยดีเซล (฿)</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-val" style="color:#10b981">${fmt(minP)}</div>
+        <div class="summary-lbl">ต่ำสุด (฿/ล.)</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-val" style="color:#f59e0b">${fmt(maxP)}</div>
+        <div class="summary-lbl">สูงสุด (฿/ล.)</div>
+      </div>
+    `;
+
+    const cards = items.map(item => {
+      const meta = getMeta(item.name);
+      const price = fmt(item.price);
+      const change = item.change != null ? parseFloat(item.change) : null;
+      let changeHtml = '';
+      if (change !== null && !isNaN(change)) {
+        if (change > 0) changeHtml = `<div class="card-change up">▲ +${change.toFixed(2)} บาท</div>`;
+        else if (change < 0) changeHtml = `<div class="card-change down">▼ ${change.toFixed(2)} บาท</div>`;
+        else changeHtml = `<div class="card-change same">— ไม่เปลี่ยนแปลง</div>`;
+      }
+      return `
+        <div class="card theme-${meta.theme}">
+          <div class="card-icon">${meta.icon}</div>
+          <div class="card-info">
+            <div class="card-name">${item.name}</div>
+            <div class="card-name-en">${meta.nameEn}</div>
+            <div>
+              <span class="card-price">${price}</span>
+              <span class="card-unit">฿/ลิตร</span>
+            </div>
+            ${changeHtml}
+          </div>
+        </div>`;
+    }).join('');
+
+    return `<div class="grid">${cards}</div>`;
+  }
+
+  // ─── NORMALISE VARIOUS API SHAPES ─────────────────────────────
+  function flattenObj(obj) {
+    // Convert { fuel_type: { name, price } } → [ {name, price} ]
+    if (!obj || typeof obj !== 'object') return [];
+    return Object.values(obj)
+      .filter(v => v && typeof v === 'object' && ('name' in v || 'price' in v))
+      .map(v => ({ name: v.name || '', price: v.price || v.value || '0', change: v.change }));
+  }
+
+  function normalise(data) {
+    if (!data) return { items: [], date: null };
+
+    // Shape A (api.chnwt.dev): { status, response: { date, stations: { ptt: {...}, ... } } }
+    if (data.response && data.response.stations && typeof data.response.stations === 'object') {
+      const date = data.response.date || null;
+      // Prefer PTT, fallback to first station
+      const stationKeys = Object.keys(data.response.stations);
+      const key = stationKeys.includes('ptt') ? 'ptt' : stationKeys[0];
+      const items = key ? flattenObj(data.response.stations[key]) : [];
+      return { items, date, stationName: key?.toUpperCase() };
+    }
+
+    // Shape B: { status, response: { date, oil: {...} } }
+    if (data.response && data.response.oil && typeof data.response.oil === 'object') {
+      return { items: flattenObj(data.response.oil), date: data.response.date || null };
+    }
+
+    // Shape C: { status, response: [ {name, price} ] }
+    if (data.response && Array.isArray(data.response)) {
+      return { items: data.response, date: data.date || null };
+    }
+
+    // Shape D: { status, response: { date, data: [...] } }
+    if (data.response && Array.isArray(data.response.data)) {
+      return { items: data.response.data, date: data.response.date || null };
+    }
+
+    // Shape E: { data: [ {name, price} ] }
+    if (Array.isArray(data.data)) return { items: data.data, date: data.date || data.update_date };
+
+    // Shape F: plain array
+    if (Array.isArray(data)) return { items: data, date: null };
+
+    // Shape G: { price: [...] }
+    if (Array.isArray(data.price)) return { items: data.price, date: data.update_date || data.date };
+
+    // Shape H: { oil: [...] }
+    if (Array.isArray(data.oil)) return { items: data.oil, date: data.date };
+
+    // Shape I: { prices: [...] }
+    if (Array.isArray(data.prices)) return { items: data.prices, date: data.date };
+
+    // Shape J: top-level object of fuel objects { gasohol_95: { name, price }, ... }
+    const topItems = flattenObj(data);
+    if (topItems.length > 0) return { items: topItems, date: null };
+
+    return { items: [], date: null };
+  }
+
+  // ─── FETCH ────────────────────────────────────────────────────
+  const ENDPOINTS = [
+    "https://api.chnwt.dev/thai-oil-api/latest",
+    "https://api.chnwt.dev/thai-oil-api/all",
+    "https://api.chnwt.dev/thai-oil-api",
+  ];
+
+  async function tryFetch(urls) {
+    for (const url of urls) {
+      try {
+        const r = await fetch(url, { headers: { Accept: "application/json" } });
+        if (r.ok) {
+          const json = await r.json();
+          return json;
+        }
+      } catch (_) { /* try next */ }
+    }
+    return null;
+  }
+
+  // ─── STATION NAME MAP ─────────────────────────────────────────
+  const STATION_NAMES = {
+    ptt: "PTT", shell: "Shell", esso: "Esso", caltex: "Caltex",
+    bangchak: "Bangchak", susco: "Susco", pt: "PT",
+    irpc: "IRPC", thai_oil: "Thai Oil", bafs: "BAFS",
+  };
+
+  let _allStations = {};  // cache for multi-station data
+  let _currentStation = null;
+  let _apiDate = null;
+
+  function renderStation(stationKey) {
+    _currentStation = stationKey;
+    const items = flattenObj(_allStations[stationKey]);
+    document.getElementById('content').innerHTML = buildCards(items);
+    // Update active tab
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.station === stationKey);
+    });
+  }
+
+  function buildTabs(stationKeys) {
+    if (stationKeys.length <= 1) return '';
+    const tabs = stationKeys.map(k => {
+      const label = STATION_NAMES[k] || k.toUpperCase();
+      return `<button class="tab-btn${k === stationKeys[0] ? ' active' : ''}" data-station="${k}" onclick="renderStation('${k}')">${label}</button>`;
+    }).join('');
+    return `<div class="tabs-wrap"><div class="tabs">${tabs}</div></div>`;
+  }
+
+  async function fetchPrices() {
+    const btn = document.getElementById('refresh-btn');
+    const content = document.getElementById('content');
+    btn.classList.add('loading');
+    content.innerHTML = `<div class="loader-wrap"><div class="spinner"></div><span>กำลังดึงข้อมูลราคาน้ำมัน...</span></div>`;
+    document.getElementById('summary-section').style.display = 'none';
+    document.getElementById('tabs-container').innerHTML = '';
+
+    try {
+      const raw = await tryFetch(ENDPOINTS);
+      if (!raw) throw new Error("ไม่สามารถเชื่อมต่อ API ได้ — กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต");
+
+      _apiDate = null;
+
+      // Check for multi-station response: { response: { stations: {...} } }
+      if (raw.response && raw.response.stations && typeof raw.response.stations === 'object') {
+        _apiDate = raw.response.date || null;
+        _allStations = raw.response.stations;
+        const keys = Object.keys(_allStations);
+        if (keys.length === 0) throw new Error("ไม่พบข้อมูลสถานี");
+
+        document.getElementById('tabs-container').innerHTML = buildTabs(keys);
+        renderStation(keys[0]);
+      } else {
+        // Single shape
+        const { items, date } = normalise(raw);
+        _apiDate = date;
+        if (!items || items.length === 0) throw new Error("ไม่พบข้อมูลราคาน้ำมัน");
+        content.innerHTML = buildCards(items);
+      }
+
+      // Update timestamp
+      const now = new Date();
+      const dateStr = _apiDate
+        ? `อัปเดต: ${_apiDate}`
+        : `ดึงข้อมูลเมื่อ ${now.toLocaleString('th-TH', { dateStyle:'medium', timeStyle:'short' })}`;
+      document.getElementById('update-time').textContent = dateStr;
+
+    } catch (err) {
+      document.getElementById('update-time').textContent = 'ไม่สามารถดึงข้อมูลได้';
+      content.innerHTML = `
+        <div class="error-box">
+          <h3>⚠️ เกิดข้อผิดพลาด</h3>
+          <p>${err.message}</p>
+          <p style="margin-top:8px;font-size:0.82rem;opacity:0.7">กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ตและลองใหม่</p>
+          <button class="retry-btn" onclick="fetchPrices()">🔄 ลองใหม่</button>
+        </div>`;
+    } finally {
+      btn.classList.remove('loading');
+    }
+  }
+
+  // Init
+  fetchPrices();
+  // Auto-refresh every 5 minutes
+  setInterval(fetchPrices, 5 * 60 * 1000);
+</script>
+</body>
+</html>
