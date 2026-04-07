@@ -7,348 +7,189 @@
   <style>
     :root {
       --primary: #1a56db;
-      --primary-dark: #1e429f;
-      --accent: #f59e0b;
-      --accent-dark: #d97706;
       --bg: #f0f4ff;
       --card-bg: #ffffff;
       --text: #1e293b;
-      --text-muted: #64748b;
+      --muted: #64748b;
       --border: #e2e8f0;
-      --success: #10b981;
-      --danger: #ef4444;
-      --shadow: 0 4px 24px rgba(30, 86, 219, 0.10);
+      --shadow: 0 4px 20px rgba(30,86,219,0.09);
       --radius: 18px;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI','Noto Sans Thai',Arial,sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-    body {
-      font-family: 'Segoe UI', 'Noto Sans Thai', Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
-
-    /* ─── HEADER ─── */
+    /* ── HEADER ── */
     header {
-      background: linear-gradient(135deg, #1a56db 0%, #1e429f 60%, #1e3a8a 100%);
-      color: #fff;
-      padding: 28px 20px 32px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
+      background: linear-gradient(135deg,#1a56db 0%,#1e3a8a 100%);
+      color:#fff; padding:22px 16px 20px; text-align:center; position:relative; overflow:hidden;
     }
-    header::before {
-      content: '';
-      position: absolute;
-      top: -60px; right: -60px;
-      width: 220px; height: 220px;
-      background: rgba(255,255,255,0.06);
-      border-radius: 50%;
+    header::before { content:''; position:absolute; top:-40px; right:-40px; width:160px; height:160px; background:rgba(255,255,255,.06); border-radius:50%; }
+    header h1 { font-size:clamp(1.2rem,4vw,1.7rem); font-weight:800; margin-bottom:4px; }
+    header p  { font-size:.82rem; opacity:.8; margin-bottom:10px; }
+    .badge {
+      display:inline-flex; align-items:center; gap:6px;
+      background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.22);
+      border-radius:50px; padding:5px 14px; font-size:.78rem;
     }
-    header::after {
-      content: '';
-      position: absolute;
-      bottom: -80px; left: -40px;
-      width: 260px; height: 260px;
-      background: rgba(255,255,255,0.04);
-      border-radius: 50%;
-    }
-    .header-flag { font-size: 2.2rem; margin-bottom: 6px; }
-    header h1 {
-      font-size: clamp(1.4rem, 4vw, 2rem);
-      font-weight: 700;
-      letter-spacing: -0.3px;
-      margin-bottom: 4px;
-    }
-    header p.subtitle {
-      font-size: 0.92rem;
-      opacity: 0.85;
-      margin-bottom: 16px;
-    }
-    .update-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(255,255,255,0.15);
-      backdrop-filter: blur(6px);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 50px;
-      padding: 6px 16px;
-      font-size: 0.82rem;
-    }
-    .dot {
-      width: 8px; height: 8px;
-      background: #4ade80;
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0%,100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(0.8); }
-    }
-
-    /* ─── REFRESH BUTTON ─── */
+    .dot { width:7px;height:7px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
     .refresh-btn {
-      margin-top: 14px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(255,255,255,0.18);
-      border: 1px solid rgba(255,255,255,0.3);
-      color: #fff;
-      border-radius: 50px;
-      padding: 8px 20px;
-      font-size: 0.88rem;
-      cursor: pointer;
-      transition: background 0.2s;
-      font-family: inherit;
+      margin-top:10px; display:inline-flex; align-items:center; gap:7px;
+      background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.28);
+      color:#fff; border-radius:50px; padding:7px 18px; font-size:.84rem;
+      cursor:pointer; font-family:inherit; transition:background .2s;
     }
-    .refresh-btn:hover { background: rgba(255,255,255,0.28); }
-    .refresh-btn svg { width: 16px; height: 16px; }
-    .refresh-btn.loading svg { animation: spin 0.8s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .refresh-btn:hover { background:rgba(255,255,255,.26); }
+    .refresh-btn svg { width:14px;height:14px; }
+    .refresh-btn.loading svg { animation:spin .8s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
 
-    /* ─── MAIN CONTENT ─── */
-    main {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 24px 16px 48px;
-    }
-
-    /* ─── SECTION HEADING ─── */
-    .section-title {
-      font-size: 0.8rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1.2px;
-      color: var(--text-muted);
-      margin: 28px 0 14px;
-    }
-
-    /* ─── GRID ─── */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
-      gap: 16px;
-    }
-
-    /* ─── CARDS ─── */
-    .card {
+    /* ── STATION PICKER (compact horizontal strip, centred) ── */
+    .station-bar {
       background: var(--card-bg);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 20px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      border-left: 5px solid var(--accent);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 32px rgba(30, 86, 219, 0.15);
-    }
-    .card-icon {
-      width: 52px; height: 52px;
-      border-radius: 14px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.6rem;
-      flex-shrink: 0;
-    }
-    .card-info { flex: 1; min-width: 0; }
-    .card-name {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 4px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .card-name-en {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-bottom: 8px;
-    }
-    .card-price {
-      font-size: 1.55rem;
-      font-weight: 800;
-      color: var(--primary-dark);
-      line-height: 1;
-    }
-    .card-unit {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      font-weight: 400;
-      margin-left: 2px;
-    }
-    .card-change {
-      font-size: 0.78rem;
-      font-weight: 600;
-      margin-top: 4px;
-    }
-    .card-change.up   { color: var(--danger); }
-    .card-change.down { color: var(--success); }
-    .card-change.same { color: var(--text-muted); }
-
-    /* Oil type color themes */
-    .theme-gasohol91  { border-color: #3b82f6; }
-    .theme-gasohol91  .card-icon { background: #eff6ff; }
-    .theme-gasohol95  { border-color: #8b5cf6; }
-    .theme-gasohol95  .card-icon { background: #f5f3ff; }
-    .theme-e20        { border-color: #10b981; }
-    .theme-e20        .card-icon { background: #ecfdf5; }
-    .theme-e85        { border-color: #f59e0b; }
-    .theme-e85        .card-icon { background: #fffbeb; }
-    .theme-diesel     { border-color: #ef4444; }
-    .theme-diesel     .card-icon { background: #fef2f2; }
-    .theme-dieselb7   { border-color: #f97316; }
-    .theme-dieselb7   .card-icon { background: #fff7ed; }
-    .theme-dieselb10  { border-color: #84cc16; }
-    .theme-dieselb10  .card-icon { background: #f7fee7; }
-    .theme-dieselb20  { border-color: #14b8a6; }
-    .theme-dieselb20  .card-icon { background: #f0fdfa; }
-    .theme-ngv        { border-color: #06b6d4; }
-    .theme-ngv        .card-icon { background: #ecfeff; }
-    .theme-lpg        { border-color: #ec4899; }
-    .theme-lpg        .card-icon { background: #fdf2f8; }
-    .theme-default    { border-color: #94a3b8; }
-    .theme-default    .card-icon { background: #f8fafc; }
-
-    /* ─── LOADER ─── */
-    .loader-wrap {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 60px 20px;
-      gap: 16px;
-      color: var(--text-muted);
-    }
-    .spinner {
-      width: 44px; height: 44px;
-      border: 4px solid var(--border);
-      border-top-color: var(--primary);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    /* ─── ERROR ─── */
-    .error-box {
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      border-radius: var(--radius);
-      padding: 24px;
-      text-align: center;
-      color: #991b1b;
-    }
-    .error-box h3 { margin-bottom: 8px; }
-    .error-box p { font-size: 0.88rem; color: #b91c1c; }
-    .retry-btn {
-      margin-top: 14px;
-      background: #ef4444;
-      color: #fff;
-      border: none;
-      border-radius: 50px;
-      padding: 10px 24px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      font-family: inherit;
-      font-weight: 600;
-      transition: background 0.2s;
-    }
-    .retry-btn:hover { background: #dc2626; }
-
-    /* ─── SUMMARY STRIP ─── */
-    .summary {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 12px;
-      margin-bottom: 4px;
-    }
-    .summary-item {
-      background: var(--card-bg);
-      border-radius: 14px;
-      padding: 16px;
-      text-align: center;
-      box-shadow: var(--shadow);
-    }
-    .summary-val {
-      font-size: 1.4rem;
-      font-weight: 800;
-      color: var(--primary-dark);
-    }
-    .summary-lbl {
-      font-size: 0.76rem;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    /* ─── FOOTER ─── */
-    footer {
-      text-align: center;
-      padding: 20px;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      border-top: 1px solid var(--border);
-    }
-    footer a { color: var(--primary); text-decoration: none; }
-
-    /* ─── TABS ─── */
-    .tabs-wrap {
-      margin: 20px 0 4px;
+      border-bottom: 1px solid var(--border);
+      padding: 12px 16px;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
     }
-    .tabs {
+    .station-bar::-webkit-scrollbar { display: none; }
+    .station-pills {
       display: flex;
-      gap: 8px;
-      padding-bottom: 4px;
-      min-width: max-content;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;   /* ← centred */
+      flex-wrap: wrap;            /* ← wrap on wide screens */
     }
-    .tab-btn {
-      background: var(--card-bg);
+    /* on very narrow screens, allow horizontal scroll without wrapping */
+    @media (max-width: 480px) {
+      .station-pills { flex-wrap: nowrap; justify-content: flex-start; }
+    }
+    .station-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg);
       border: 1.5px solid var(--border);
       border-radius: 50px;
-      padding: 8px 20px;
-      font-size: 0.88rem;
-      font-family: inherit;
-      font-weight: 600;
-      color: var(--text-muted);
+      padding: 6px 14px 6px 6px;
       cursor: pointer;
-      transition: all 0.18s;
+      transition: all .18s;
       white-space: nowrap;
+      font-family: inherit;
+      font-size: .83rem;
+      font-weight: 600;
+      color: var(--muted);
     }
-    .tab-btn:hover { border-color: var(--primary); color: var(--primary); }
-    .tab-btn.active {
-      background: var(--primary);
-      border-color: var(--primary);
-      color: #fff;
+    .station-pill:hover { border-color: var(--primary); color: var(--primary); background: #eff6ff; }
+    .station-pill.active { border-color: var(--primary); background: #eff6ff; color: var(--primary); box-shadow: 0 2px 8px rgba(30,86,219,.15); }
+    .pill-logo {
+      width: 30px; height: 30px; border-radius: 50%;
+      overflow: hidden; flex-shrink: 0;
+      background: #f1f5f9;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pill-logo img { width: 28px; height: 28px; object-fit: contain; border-radius: 50%; }
+    .pill-logo svg { width: 30px; height: 30px; }
+    .pill-logo .logo-fb {
+      width: 30px; height: 30px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: .65rem; color: #fff;
+    }
+    .station-label-pill { font-size: .8rem; }
+
+    /* ── MAIN ── */
+    main { max-width: 960px; margin: 0 auto; padding: 20px 14px 56px; }
+
+    /* ── SECTION HEADER ── */
+    .sec-header {
+      display: flex; align-items: center; gap: 14px;
+      background: var(--card-bg); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 14px 18px;
+      margin-bottom: 16px;
+    }
+    .sec-logo { width:52px;height:52px;border-radius:12px;overflow:hidden;flex-shrink:0;background:#f8fafc;border:1px solid var(--border);display:flex;align-items:center;justify-content:center; }
+    .sec-logo img { width:46px;height:46px;object-fit:contain; }
+    .sec-title { font-size:1rem;font-weight:800; }
+    .sec-sub   { font-size:.76rem;color:var(--muted);margin-top:2px; }
+    .sec-label {
+      font-size:.72rem;font-weight:700;text-transform:uppercase;
+      letter-spacing:1.2px;color:var(--muted);margin:0 0 12px;
     }
 
-    /* ─── RESPONSIVE ─── */
-    @media (max-width: 480px) {
-      header { padding: 22px 16px 28px; }
-      main { padding: 18px 12px 40px; }
-      .card { padding: 16px; gap: 12px; }
-      .card-icon { width: 44px; height: 44px; font-size: 1.3rem; }
-      .card-price { font-size: 1.3rem; }
+    /* ── FUEL GRID ── */
+    .fuel-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+      gap: 12px;
+    }
+    .fuel-card {
+      background: var(--card-bg); border-radius: 14px;
+      box-shadow: var(--shadow); padding: 16px 18px;
+      display: flex; align-items: center; gap: 14px;
+      border-left: 4px solid #94a3b8;
+      transition: transform .18s, box-shadow .18s;
+    }
+    .fuel-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(30,86,219,.12); }
+    .fuel-icon { font-size: 1.7rem; flex-shrink: 0; }
+    .fuel-name    { font-size: .9rem; font-weight: 700; line-height: 1.2; }
+    .fuel-name-en { font-size: .71rem; color: var(--muted); margin-top: 1px; }
+    .fuel-price   { font-size: 1.4rem; font-weight: 800; color: var(--primary); margin-top: 5px; line-height: 1; }
+    .fuel-unit    { font-size: .74rem; color: var(--muted); font-weight: 400; }
+    .fuel-change  { font-size: .73rem; font-weight: 600; margin-top: 3px; }
+    .up   { color: #ef4444; } .down { color: #10b981; } .same { color: var(--muted); }
+
+    /* fuel border colours */
+    .fc-b95   { border-color: #dc2626; }
+    .fc-g95   { border-color: #8b5cf6; }
+    .fc-g91   { border-color: #3b82f6; }
+    .fc-e20   { border-color: #10b981; }
+    .fc-e85   { border-color: #f59e0b; }
+    .fc-dprem { border-color: #7c3aed; }
+    .fc-d     { border-color: #ef4444; }
+    .fc-db7   { border-color: #f97316; }
+    .fc-db10  { border-color: #84cc16; }
+    .fc-db20  { border-color: #14b8a6; }
+    .fc-ngv   { border-color: #06b6d4; }
+    .fc-lpg   { border-color: #ec4899; }
+    .fc-def   { border-color: #94a3b8; }
+
+    /* ── LOADER / ERROR ── */
+    .loader-wrap { display:flex;flex-direction:column;align-items:center;justify-content:center;padding:56px 20px;gap:14px;color:var(--muted); }
+    .spinner { width:42px;height:42px;border:4px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite; }
+    .error-box { background:#fef2f2;border:1px solid #fecaca;border-radius:var(--radius);padding:24px;text-align:center;color:#991b1b; }
+    .error-box h3 { margin-bottom:6px; }
+    .retry-btn { margin-top:12px;background:#ef4444;color:#fff;border:none;border-radius:50px;padding:9px 22px;font-size:.88rem;cursor:pointer;font-family:inherit;font-weight:600; }
+    .retry-btn:hover { background:#dc2626; }
+
+    /* ── FOOTER ── */
+    footer { text-align:center;padding:18px;font-size:.78rem;color:var(--muted);border-top:1px solid var(--border); }
+    footer a { color:var(--primary);text-decoration:none; }
+
+    @media(max-width:480px){
+      header { padding:18px 12px 16px; }
+      main   { padding:14px 10px 40px; }
+      .fuel-grid { grid-template-columns: 1fr 1fr; gap:10px; }
+      .fuel-card { padding:12px 10px; gap:8px; }
+      .fuel-price { font-size:1.2rem; }
+      .fuel-icon { font-size:1.3rem; }
+      .sec-header { padding:12px 14px; }
+    }
+    @media(max-width:360px){
+      .fuel-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
+<!-- ── HEADER ── -->
 <header>
-  <div class="header-flag">⛽</div>
-  <h1>ราคาน้ำมันวันนี้</h1>
-  <p class="subtitle">Thai Oil Price — อัปเดตล่าสุดจาก PTT</p>
-  <div class="update-badge">
+  <h1>⛽ ราคาน้ำมันวันนี้</h1>
+  <p>Thai Oil Price — อัปเดตราคาทุกปั๊มทั่วไทย</p>
+  <div class="badge">
     <span class="dot"></span>
     <span id="update-time">กำลังโหลด...</span>
-  </div>
-  <br/>
+  </div><br/>
   <button class="refresh-btn" id="refresh-btn" onclick="fetchPrices()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
       <path d="M23 4v6h-6M1 20v-6h6"/>
@@ -358,16 +199,24 @@
   </button>
 </header>
 
+<!-- ── STATION PICKER ── -->
+<div class="station-bar" id="station-bar" style="display:none">
+  <div class="station-pills" id="station-pills"></div>
+</div>
+
+<!-- ── MAIN CONTENT ── -->
 <main>
-  <div id="summary-section" style="display:none">
-    <p class="section-title">ภาพรวมราคา</p>
-    <div class="summary" id="summary"></div>
+  <div id="sec-header-wrap" style="display:none" class="sec-header">
+    <div class="sec-logo" id="sec-logo"></div>
+    <div>
+      <div class="sec-title" id="sec-title">—</div>
+      <div class="sec-sub"  id="sec-sub">—</div>
+    </div>
   </div>
 
-  <div id="tabs-container"></div>
-  <p class="section-title">ราคาน้ำมันทุกประเภท (บาท/ลิตร)</p>
-  <div id="content">
-    <div class="loader-wrap">
+  <p class="sec-label">ราคาน้ำมันทุกประเภท (บาท/ลิตร)</p>
+  <div id="fuel-grid" class="fuel-grid">
+    <div class="loader-wrap" style="grid-column:1/-1">
       <div class="spinner"></div>
       <span>กำลังดึงข้อมูลราคาน้ำมัน...</span>
     </div>
@@ -380,271 +229,295 @@
 </footer>
 
 <script>
-  // ─── OIL METADATA ─────────────────────────────────────────────
-  const OIL_META = {
-    // keyword → { icon, theme, nameEn }
-    "แก๊สโซฮอล์ 91":  { icon: "🔵", theme: "gasohol91",  nameEn: "Gasohol 91" },
-    "แก๊สโซฮอล์ 95":  { icon: "🟣", theme: "gasohol95",  nameEn: "Gasohol 95" },
-    "gasohol 91":      { icon: "🔵", theme: "gasohol91",  nameEn: "Gasohol 91" },
-    "gasohol 95":      { icon: "🟣", theme: "gasohol95",  nameEn: "Gasohol 95" },
-    "e20":             { icon: "🟢", theme: "e20",        nameEn: "Gasohol E20" },
-    "e85":             { icon: "🟡", theme: "e85",        nameEn: "Gasohol E85" },
-    "b7":              { icon: "🟠", theme: "dieselb7",   nameEn: "Diesel B7" },
-    "b10":             { icon: "🍏", theme: "dieselb10",  nameEn: "Diesel B10" },
-    "b20":             { icon: "🩵", theme: "dieselb20",  nameEn: "Diesel B20" },
-    "ดีเซล":           { icon: "🔴", theme: "diesel",     nameEn: "Diesel" },
-    "diesel":          { icon: "🔴", theme: "diesel",     nameEn: "Diesel" },
-    "ngv":             { icon: "💨", theme: "ngv",        nameEn: "NGV" },
-    "lpg":             { icon: "💗", theme: "lpg",        nameEn: "LPG" },
-  };
+// ── STATION LOGOS ────────────────────────────────────────────────
+// Stations that must NEVER appear (even if returned by API)
+const BLACKLIST = new Set(["esso"]);
 
-  function getMeta(name) {
-    const lower = (name || "").toLowerCase();
-    for (const [key, val] of Object.entries(OIL_META)) {
-      if (lower.includes(key.toLowerCase())) return val;
+const STATIONS = {
+  ptt: {
+    name: "PTT", color: "#E8192C",
+    logo: "https://commons.wikimedia.org/wiki/Special:FilePath/Ptt_logo.svg",
+  },
+  shell: {
+    name: "Shell", color: "#FBCE07",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Shell.svg/120px-Shell.svg.png",
+  },
+  caltex: {
+    name: "Caltex", color: "#E8192C",
+    logo: "https://commons.wikimedia.org/wiki/Special:FilePath/Caltex_brand_logo.svg",
+  },
+  bangchak: {
+    name: "Bangchak", color: "#00843D",
+    logo: "https://commons.wikimedia.org/wiki/Special:FilePath/Bangchak_Corporation_logo.svg",
+  },
+  bcp: {
+    name: "Bangchak", color: "#00843D",
+    logo: "https://commons.wikimedia.org/wiki/Special:FilePath/Bangchak_Corporation_logo.svg",
+  },
+  pt: {
+    name: "PT", color: "#ED1C24",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/PTG_Energy_Logo.svg/120px-PTG_Energy_Logo.svg.png",
+  },
+  susco: {
+    name: "Susco", color: "#F5C400",
+    logo: "https://upload.wikimedia.org/wikipedia/th/thumb/2/2a/Susco_Logo.png/120px-Susco_Logo.png",
+    logoFallbacks: [
+      "https://www.susco.co.th/images/logo_susco.gif",
+      "https://www.susco.co.th/images/logo.gif",
+    ],
+  },
+  susco_dealers: {
+    name: "Susco", color: "#F5C400",
+    logo: "https://upload.wikimedia.org/wikipedia/th/thumb/2/2a/Susco_Logo.png/120px-Susco_Logo.png",
+    logoFallbacks: [
+      "https://www.susco.co.th/images/logo_susco.gif",
+      "https://www.susco.co.th/images/logo.gif",
+    ],
+  },
+  irpc: {
+    name: "IRPC", color: "#00457C",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/IRPC_Logo.png/120px-IRPC_Logo.png",
+    logoFallbacks: [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/IRPC_logo.svg",
+    ],
+  },
+  thai_oil: {
+    name: "Thai Oil", color: "#003087",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Thai_Oil_logo.svg/120px-Thai_Oil_logo.svg.png",
+  },
+  pure: {
+    name: "Pure", color: "#0066B2",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Pure_Thai_Energy_logo.svg/120px-Pure_Thai_Energy_logo.svg.png",
+  },
+  bafs: {
+    name: "BAFS", color: "#1A237E",
+    logoSvg: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <rect width="200" height="200" rx="20" fill="#1A237E"/>
+      <polygon points="100,30 140,110 60,110" fill="#42A5F5"/>
+      <polygon points="100,55 130,110 70,110" fill="#90CAF9"/>
+      <text x="100" y="155" text-anchor="middle" font-family="Arial Black,Arial" font-weight="900" font-size="32" fill="white" letter-spacing="2">BAFS</text>
+    </svg>`,
+  },
+};
+
+function getStation(key) {
+  const k = (key||"").toLowerCase().replace(/[\s-]/g,"_");
+  return STATIONS[k] || { name:(key||"?").toUpperCase(), color:"#64748b", logo:"", logoSvg:null };
+}
+
+// ── FUEL METADATA ────────────────────────────────────────────────
+const FUELS = [
+  { keys:["เบนซิน","benzine","bensin","super_benzine"], icon:"🟥", en:"Benzine 95",   cls:"fc-b95"  },
+  { keys:["super power","superpower","ซูเปอร์พาวเวอร์","super_power"], icon:"⚡", en:"Super Power", cls:"fc-g95" },
+  { keys:["gasohol_95","gasohol95","แก๊สโซฮอล์ 95","gasohol 95"], icon:"🟣", en:"Gasohol 95", cls:"fc-g95" },
+  { keys:["gasohol_91","gasohol91","แก๊สโซฮอล์ 91","gasohol 91"], icon:"🔵", en:"Gasohol 91", cls:"fc-g91" },
+  { keys:["e20","gasohol_e20","แก๊สโซฮอล์ e20"],  icon:"🟢", en:"E20",           cls:"fc-e20"  },
+  { keys:["e85","gasohol_e85","แก๊สโซฮอล์ e85"],  icon:"🟡", en:"E85",           cls:"fc-e85"  },
+  { keys:["premium_diesel","พรีเมียมดีเซล","ดีเซลพรีเมียม"], icon:"💎", en:"Premium Diesel", cls:"fc-dprem" },
+  { keys:["diesel_b20","b20","ดีเซล b20"],         icon:"🩵", en:"Diesel B20",    cls:"fc-db20" },
+  { keys:["diesel_b10","b10","ดีเซล b10"],         icon:"🍏", en:"Diesel B10",    cls:"fc-db10" },
+  { keys:["diesel_b7","b7","ดีเซล b7","hsd"],      icon:"🟠", en:"Diesel B7",     cls:"fc-db7"  },
+  { keys:["diesel","ดีเซล"],                        icon:"🔴", en:"Diesel",        cls:"fc-d"    },
+  { keys:["ngv","แก๊ส ngv","ก๊าซ ngv"],            icon:"💨", en:"NGV",           cls:"fc-ngv"  },
+  { keys:["lpg","แก๊ส lpg","ก๊าซ lpg"],            icon:"💗", en:"LPG",           cls:"fc-lpg"  },
+];
+
+function getFuel(nameOrKey) {
+  const lc = (nameOrKey||"").toLowerCase().replace(/\s/g,"");
+  for (const f of FUELS) {
+    if (f.keys.some(k => lc.includes(k.toLowerCase().replace(/\s/g,"")))) return f;
+  }
+  return { icon:"⛽", en: nameOrKey, cls:"fc-def" };
+}
+
+// ── FLATTEN STATION OBJ ──────────────────────────────────────────
+function flattenStation(obj) {
+  if (!obj || typeof obj !== "object") return [];
+  return Object.entries(obj)
+    .filter(([,v]) => v && typeof v === "object" && ("name" in v || "price" in v))
+    .map(([key,v]) => ({ key, name:v.name||key, price:v.price??v.value??"0", change:v.change }));
+}
+
+// ── NORMALISE API ────────────────────────────────────────────────
+function normalise(data) {
+  if (!data) return { stations:{}, date:null };
+  if (data.response?.stations) return { stations:data.response.stations, date:data.response.date };
+  if (data.response?.oil)      return { stations:{ ptt:data.response.oil }, date:data.response.date };
+  if (Array.isArray(data.response)) return { stations:{ ptt:Object.fromEntries(data.response.map(i=>[i.key||i.name,i])) }, date:data.date };
+  return { stations:{ ptt:{} }, date:null };
+}
+
+// ── RENDER LOGO ──────────────────────────────────────────────────
+function logoHtml(sd, size=46) {
+  const r = Math.round(size/4);
+  const fbStyle = `width:${size}px;height:${size}px;border-radius:${r}px;background:${sd.color};display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:.75rem;flex-shrink:0`;
+
+  if (sd.logoSvg) {
+    return `<div style="width:${size}px;height:${size}px;border-radius:${r}px;overflow:hidden;background:#fff;flex-shrink:0">${sd.logoSvg}</div>`;
+  }
+
+  if (sd.logo) {
+    const fallbacks = sd.logoFallbacks || [];
+    const fallbacksJson = JSON.stringify(fallbacks).replace(/"/g,"&quot;");
+    // Wrapper div: img + hidden fallback badge side by side; onerror hides img and shows badge
+    return `<div style="width:${size}px;height:${size}px;flex-shrink:0;position:relative">
+      <img src="${sd.logo}" alt="${sd.name}"
+        data-fallbacks="${fallbacksJson}" data-fbidx="0"
+        style="width:100%;height:100%;object-fit:contain;border-radius:${r}px;background:#fff;display:block"
+        onerror="var fbs=JSON.parse(this.dataset.fallbacks||'[]'),i=parseInt(this.dataset.fbidx||0);if(i<fbs.length){this.dataset.fbidx=i+1;this.src=fbs[i];}else{this.style.display='none';this.nextElementSibling.style.display='flex';}"/>
+      <div style="${fbStyle};display:none;position:absolute;inset:0">${sd.name.substring(0,4)}</div>
+    </div>`;
+  }
+
+  return `<div style="${fbStyle}">${sd.name.substring(0,4)}</div>`;
+}
+
+// ── BUILD FUEL CARDS ─────────────────────────────────────────────
+function buildFuelCards(items) {
+  if (!items.length) return `<p style="color:var(--muted);text-align:center;padding:32px;grid-column:1/-1">ไม่พบข้อมูลราคาน้ำมัน</p>`;
+  return items.map(item => {
+    const f  = getFuel(item.key || item.name);
+    const p  = parseFloat(item.price);
+    const price = isNaN(p) ? item.price : p.toFixed(2);
+    const ch = item.change != null ? parseFloat(item.change) : null;
+    let chHtml = "";
+    if (ch !== null && !isNaN(ch)) {
+      if (ch > 0) chHtml = `<div class="fuel-change up">▲ +${ch.toFixed(2)} บาท</div>`;
+      else if (ch < 0) chHtml = `<div class="fuel-change down">▼ ${ch.toFixed(2)} บาท</div>`;
+      else chHtml = `<div class="fuel-change same">— คงที่</div>`;
     }
-    return { icon: "⛽", theme: "default", nameEn: name };
-  }
+    return `
+      <div class="fuel-card ${f.cls}">
+        <div class="fuel-icon">${f.icon}</div>
+        <div>
+          <div class="fuel-name">${item.name}</div>
+          <div class="fuel-name-en">${f.en}</div>
+          <div><span class="fuel-price">${price}</span><span class="fuel-unit"> ฿/ลิตร</span></div>
+          ${chHtml}
+        </div>
+      </div>`;
+  }).join("");
+}
 
-  // ─── PRICE FORMATTING ─────────────────────────────────────────
-  function fmt(val) {
-    const n = parseFloat(val);
-    return isNaN(n) ? val : n.toFixed(2);
-  }
+// ── STATE ────────────────────────────────────────────────────────
+let _stations = {};
+let _activeKey = null;
 
-  // ─── BUILD CARDS ──────────────────────────────────────────────
-  function buildCards(items) {
-    if (!items || items.length === 0) {
-      return `<div class="error-box"><h3>ไม่พบข้อมูล</h3><p>ไม่พบข้อมูลราคาน้ำมัน</p></div>`;
+function selectStation(key) {
+  _activeKey = key;
+  const sd    = getStation(key);
+  const items = flattenStation(_stations[key]);
+
+  // Section header
+  document.getElementById("sec-logo").innerHTML = logoHtml(sd, 46);
+  document.getElementById("sec-title").textContent = sd.name;
+  document.getElementById("sec-sub").textContent   = `แสดงราคาน้ำมัน ${items.length} ชนิด`;
+  document.getElementById("sec-header-wrap").style.display = "flex";
+
+  // Fuel cards — always visible, update immediately
+  document.getElementById("fuel-grid").innerHTML = buildFuelCards(items);
+
+  // Highlight pill
+  document.querySelectorAll(".station-pill").forEach(p => p.classList.toggle("active", p.dataset.key === key));
+}
+
+// ── BUILD STATION PILLS ──────────────────────────────────────────
+function buildPills(keys) {
+  return keys.map(k => {
+    const sd = getStation(k);
+    let lgo;
+    if (sd.logoSvg) {
+      lgo = `<div class="pill-logo">${sd.logoSvg}</div>`;
+    } else if (sd.logo) {
+      const fallbacks = sd.logoFallbacks || [];
+      const fbJson = JSON.stringify(fallbacks).replace(/"/g,"&quot;");
+      lgo = `<div class="pill-logo" style="position:relative">
+        <img src="${sd.logo}" alt="${sd.name}"
+          data-fallbacks="${fbJson}" data-fbidx="0"
+          style="width:100%;height:100%;object-fit:contain;display:block"
+          onerror="var fbs=JSON.parse(this.dataset.fallbacks||'[]'),i=parseInt(this.dataset.fbidx||0);if(i<fbs.length){this.dataset.fbidx=i+1;this.src=fbs[i];}else{this.style.display='none';this.nextElementSibling.style.display='flex';}"/>
+        <div class="logo-fb" style="background:${sd.color};display:none;position:absolute;inset:0">${sd.name.substring(0,3)}</div>
+      </div>`;
+    } else {
+      lgo = `<div class="pill-logo"><div class="logo-fb" style="background:${sd.color}">${sd.name.substring(0,3)}</div></div>`;
     }
+    return `<button class="station-pill" data-key="${k}" onclick="selectStation('${k}')">${lgo}<span class="station-label-pill">${sd.name}</span></button>`;
+  }).join("");
+}
 
-    let prices = items.map(i => parseFloat(i.price)).filter(p => !isNaN(p));
-    let minP = Math.min(...prices);
-    let maxP = Math.max(...prices);
+// ── FETCH ────────────────────────────────────────────────────────
+const ENDPOINTS = [
+  "https://api.chnwt.dev/thai-oil-api/latest",
+  "https://api.chnwt.dev/thai-oil-api/all",
+  "https://api.chnwt.dev/thai-oil-api",
+];
 
-    // Summary
-    const gasTypes = items.filter(i => getMeta(i.name).theme.startsWith('gasohol') || getMeta(i.name).theme === 'e20' || getMeta(i.name).theme === 'e85');
-    const dieselTypes = items.filter(i => getMeta(i.name).theme.startsWith('diesel'));
-    const avgGas = gasTypes.length ? (gasTypes.reduce((a,b) => a + parseFloat(b.price||0), 0) / gasTypes.length).toFixed(2) : '-';
-    const avgDiesel = dieselTypes.length ? (dieselTypes.reduce((a,b) => a + parseFloat(b.price||0), 0) / dieselTypes.length).toFixed(2) : '-';
-
-    document.getElementById('summary-section').style.display = '';
-    document.getElementById('summary').innerHTML = `
-      <div class="summary-item">
-        <div class="summary-val">${items.length}</div>
-        <div class="summary-lbl">ประเภทน้ำมัน</div>
-      </div>
-      <div class="summary-item">
-        <div class="summary-val" style="color:#3b82f6">${avgGas}</div>
-        <div class="summary-lbl">เฉลี่ยเบนซิน (฿)</div>
-      </div>
-      <div class="summary-item">
-        <div class="summary-val" style="color:#ef4444">${avgDiesel}</div>
-        <div class="summary-lbl">เฉลี่ยดีเซล (฿)</div>
-      </div>
-      <div class="summary-item">
-        <div class="summary-val" style="color:#10b981">${fmt(minP)}</div>
-        <div class="summary-lbl">ต่ำสุด (฿/ล.)</div>
-      </div>
-      <div class="summary-item">
-        <div class="summary-val" style="color:#f59e0b">${fmt(maxP)}</div>
-        <div class="summary-lbl">สูงสุด (฿/ล.)</div>
-      </div>
-    `;
-
-    const cards = items.map(item => {
-      const meta = getMeta(item.name);
-      const price = fmt(item.price);
-      const change = item.change != null ? parseFloat(item.change) : null;
-      let changeHtml = '';
-      if (change !== null && !isNaN(change)) {
-        if (change > 0) changeHtml = `<div class="card-change up">▲ +${change.toFixed(2)} บาท</div>`;
-        else if (change < 0) changeHtml = `<div class="card-change down">▼ ${change.toFixed(2)} บาท</div>`;
-        else changeHtml = `<div class="card-change same">— ไม่เปลี่ยนแปลง</div>`;
-      }
-      return `
-        <div class="card theme-${meta.theme}">
-          <div class="card-icon">${meta.icon}</div>
-          <div class="card-info">
-            <div class="card-name">${item.name}</div>
-            <div class="card-name-en">${meta.nameEn}</div>
-            <div>
-              <span class="card-price">${price}</span>
-              <span class="card-unit">฿/ลิตร</span>
-            </div>
-            ${changeHtml}
-          </div>
-        </div>`;
-    }).join('');
-
-    return `<div class="grid">${cards}</div>`;
-  }
-
-  // ─── NORMALISE VARIOUS API SHAPES ─────────────────────────────
-  function flattenObj(obj) {
-    // Convert { fuel_type: { name, price } } → [ {name, price} ]
-    if (!obj || typeof obj !== 'object') return [];
-    return Object.values(obj)
-      .filter(v => v && typeof v === 'object' && ('name' in v || 'price' in v))
-      .map(v => ({ name: v.name || '', price: v.price || v.value || '0', change: v.change }));
-  }
-
-  function normalise(data) {
-    if (!data) return { items: [], date: null };
-
-    // Shape A (api.chnwt.dev): { status, response: { date, stations: { ptt: {...}, ... } } }
-    if (data.response && data.response.stations && typeof data.response.stations === 'object') {
-      const date = data.response.date || null;
-      // Prefer PTT, fallback to first station
-      const stationKeys = Object.keys(data.response.stations);
-      const key = stationKeys.includes('ptt') ? 'ptt' : stationKeys[0];
-      const items = key ? flattenObj(data.response.stations[key]) : [];
-      return { items, date, stationName: key?.toUpperCase() };
-    }
-
-    // Shape B: { status, response: { date, oil: {...} } }
-    if (data.response && data.response.oil && typeof data.response.oil === 'object') {
-      return { items: flattenObj(data.response.oil), date: data.response.date || null };
-    }
-
-    // Shape C: { status, response: [ {name, price} ] }
-    if (data.response && Array.isArray(data.response)) {
-      return { items: data.response, date: data.date || null };
-    }
-
-    // Shape D: { status, response: { date, data: [...] } }
-    if (data.response && Array.isArray(data.response.data)) {
-      return { items: data.response.data, date: data.response.date || null };
-    }
-
-    // Shape E: { data: [ {name, price} ] }
-    if (Array.isArray(data.data)) return { items: data.data, date: data.date || data.update_date };
-
-    // Shape F: plain array
-    if (Array.isArray(data)) return { items: data, date: null };
-
-    // Shape G: { price: [...] }
-    if (Array.isArray(data.price)) return { items: data.price, date: data.update_date || data.date };
-
-    // Shape H: { oil: [...] }
-    if (Array.isArray(data.oil)) return { items: data.oil, date: data.date };
-
-    // Shape I: { prices: [...] }
-    if (Array.isArray(data.prices)) return { items: data.prices, date: data.date };
-
-    // Shape J: top-level object of fuel objects { gasohol_95: { name, price }, ... }
-    const topItems = flattenObj(data);
-    if (topItems.length > 0) return { items: topItems, date: null };
-
-    return { items: [], date: null };
-  }
-
-  // ─── FETCH ────────────────────────────────────────────────────
-  const ENDPOINTS = [
-    "https://api.chnwt.dev/thai-oil-api/latest",
-    "https://api.chnwt.dev/thai-oil-api/all",
-    "https://api.chnwt.dev/thai-oil-api",
-  ];
-
-  async function tryFetch(urls) {
-    for (const url of urls) {
-      try {
-        const r = await fetch(url, { headers: { Accept: "application/json" } });
-        if (r.ok) {
-          const json = await r.json();
-          return json;
-        }
-      } catch (_) { /* try next */ }
-    }
-    return null;
-  }
-
-  // ─── STATION NAME MAP ─────────────────────────────────────────
-  const STATION_NAMES = {
-    ptt: "PTT", shell: "Shell", esso: "Esso", caltex: "Caltex",
-    bangchak: "Bangchak", susco: "Susco", pt: "PT",
-    irpc: "IRPC", thai_oil: "Thai Oil", bafs: "BAFS",
-  };
-
-  let _allStations = {};  // cache for multi-station data
-  let _currentStation = null;
-  let _apiDate = null;
-
-  function renderStation(stationKey) {
-    _currentStation = stationKey;
-    const items = flattenObj(_allStations[stationKey]);
-    document.getElementById('content').innerHTML = buildCards(items);
-    // Update active tab
-    document.querySelectorAll('.tab-btn').forEach(b => {
-      b.classList.toggle('active', b.dataset.station === stationKey);
-    });
-  }
-
-  function buildTabs(stationKeys) {
-    if (stationKeys.length <= 1) return '';
-    const tabs = stationKeys.map(k => {
-      const label = STATION_NAMES[k] || k.toUpperCase();
-      return `<button class="tab-btn${k === stationKeys[0] ? ' active' : ''}" data-station="${k}" onclick="renderStation('${k}')">${label}</button>`;
-    }).join('');
-    return `<div class="tabs-wrap"><div class="tabs">${tabs}</div></div>`;
-  }
-
-  async function fetchPrices() {
-    const btn = document.getElementById('refresh-btn');
-    const content = document.getElementById('content');
-    btn.classList.add('loading');
-    content.innerHTML = `<div class="loader-wrap"><div class="spinner"></div><span>กำลังดึงข้อมูลราคาน้ำมัน...</span></div>`;
-    document.getElementById('summary-section').style.display = 'none';
-    document.getElementById('tabs-container').innerHTML = '';
-
+async function tryFetch(urls) {
+  for (const url of urls) {
     try {
-      const raw = await tryFetch(ENDPOINTS);
-      if (!raw) throw new Error("ไม่สามารถเชื่อมต่อ API ได้ — กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต");
-
-      _apiDate = null;
-
-      // Check for multi-station response: { response: { stations: {...} } }
-      if (raw.response && raw.response.stations && typeof raw.response.stations === 'object') {
-        _apiDate = raw.response.date || null;
-        _allStations = raw.response.stations;
-        const keys = Object.keys(_allStations);
-        if (keys.length === 0) throw new Error("ไม่พบข้อมูลสถานี");
-
-        document.getElementById('tabs-container').innerHTML = buildTabs(keys);
-        renderStation(keys[0]);
-      } else {
-        // Single shape
-        const { items, date } = normalise(raw);
-        _apiDate = date;
-        if (!items || items.length === 0) throw new Error("ไม่พบข้อมูลราคาน้ำมัน");
-        content.innerHTML = buildCards(items);
-      }
-
-      // Update timestamp
-      const now = new Date();
-      const dateStr = _apiDate
-        ? `อัปเดต: ${_apiDate}`
-        : `ดึงข้อมูลเมื่อ ${now.toLocaleString('th-TH', { dateStyle:'medium', timeStyle:'short' })}`;
-      document.getElementById('update-time').textContent = dateStr;
-
-    } catch (err) {
-      document.getElementById('update-time').textContent = 'ไม่สามารถดึงข้อมูลได้';
-      content.innerHTML = `
-        <div class="error-box">
-          <h3>⚠️ เกิดข้อผิดพลาด</h3>
-          <p>${err.message}</p>
-          <p style="margin-top:8px;font-size:0.82rem;opacity:0.7">กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ตและลองใหม่</p>
-          <button class="retry-btn" onclick="fetchPrices()">🔄 ลองใหม่</button>
-        </div>`;
-    } finally {
-      btn.classList.remove('loading');
-    }
+      const r = await fetch(url, { headers:{ Accept:"application/json" } });
+      if (r.ok) return await r.json();
+    } catch(_) {}
   }
+  return null;
+}
 
-  // Init
-  fetchPrices();
-  // Auto-refresh every 5 minutes
-  setInterval(fetchPrices, 5 * 60 * 1000);
+async function fetchPrices() {
+  const btn  = document.getElementById("refresh-btn");
+  const grid = document.getElementById("fuel-grid");
+  btn.classList.add("loading");
+  grid.innerHTML = `<div class="loader-wrap" style="grid-column:1/-1"><div class="spinner"></div><span>กำลังดึงข้อมูลราคาน้ำมัน...</span></div>`;
+
+  try {
+    const raw = await tryFetch(ENDPOINTS);
+    if (!raw) throw new Error("ไม่สามารถเชื่อมต่อ API ได้");
+
+    const { stations: rawStations, date } = normalise(raw);
+    // Remove blacklisted stations (e.g. esso) even if API returns them
+    const stations = Object.fromEntries(
+      Object.entries(rawStations).filter(([k]) => !BLACKLIST.has(k.toLowerCase()))
+    );
+    const keys = Object.keys(stations);
+    if (!keys.length) throw new Error("ไม่พบข้อมูลสถานีน้ำมัน");
+
+    _stations = stations;
+
+    // Timestamp
+    const now = new Date();
+    document.getElementById("update-time").textContent = date
+      ? `อัปเดต: ${date}`
+      : `โหลดเมื่อ ${now.toLocaleString("th-TH",{dateStyle:"medium",timeStyle:"short"})}`;
+
+    // Station pills (show only if > 1 station)
+    const bar = document.getElementById("station-bar");
+    if (keys.length > 1) {
+      document.getElementById("station-pills").innerHTML = buildPills(keys);
+      bar.style.display = "";
+    } else {
+      bar.style.display = "none";
+    }
+
+    // ✅ Auto-show fuel cards for active (or first) station IMMEDIATELY
+    const autoKey = (_activeKey && stations[_activeKey]) ? _activeKey : keys[0];
+    selectStation(autoKey);
+
+  } catch(err) {
+    document.getElementById("update-time").textContent = "ไม่สามารถดึงข้อมูลได้";
+    document.getElementById("sec-header-wrap").style.display = "none";
+    grid.innerHTML = `
+      <div class="error-box" style="grid-column:1/-1">
+        <h3>⚠️ เกิดข้อผิดพลาด</h3>
+        <p>${err.message}</p>
+        <p style="margin-top:6px;font-size:.8rem;opacity:.7">กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ตและลองใหม่</p>
+        <button class="retry-btn" onclick="fetchPrices()">🔄 ลองใหม่</button>
+      </div>`;
+  } finally {
+    btn.classList.remove("loading");
+  }
+}
+
+fetchPrices();
+setInterval(fetchPrices, 5 * 60 * 1000);
 </script>
 </body>
 </html>
